@@ -539,11 +539,22 @@ export default {
 
                 // Escribe los nombres de procesos únicos en un archivo
                 const fileText = uniqueProcessNamesWithCategories.join('\n');
+                
+                // Hacer una solicitud para obtener la última entrada de URLs para este userId en MongoDB
+                const urlsResponse = await axios.get(`http://localhost:8080/obtenerUltimaEntrada/${userId}`);
+                const lastEntry = urlsResponse.data;
+                const latestUrls = lastEntry.urls.split(','); // Convertir la cadena de URLs en un array
+
+                // Hacer una solicitud para obtener los procesos para este userId
+                const processesResponse = await axios.get(`http://localhost:8080/obtenerProcesos/${userId}`);
+                const apps = processesResponse.data;
 
                 this.selectedStudent = {
                     ...selectedStudent,
-                    apps: uniqueProcessNamesWithCategories
+                    latestUrls, // Asignar el array de URLs
+                    apps: uniqueProcessNamesWithCategories,
                 };
+                console.log("Última URLs: ", latestUrls);
                 console.log("procesos: " + uniqueProcessNamesWithCategories.join(', '));
 
                 this.showModal = true;
